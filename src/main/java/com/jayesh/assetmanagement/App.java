@@ -7,7 +7,7 @@ public class App {
 	
 	public App() {
 		
-		System.out.println("*** Welcome to Assets Management System ***");
+		System.out.println("*** Welcome to Assets Management System Phase-II ***");
         
         int a;
         
