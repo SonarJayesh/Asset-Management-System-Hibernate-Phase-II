@@ -2,33 +2,76 @@ package com.jayesh.assetmanagement;
 
 import java.util.List;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+
 import com.jayesh.assetmanagement.util.Assets;
 import com.jayesh.assetmanagement.util.HibernateUtil;
+
 
 public class ViewAllAssets {
 	
 	public ViewAllAssets() {
 		
-		
-		Session session = HibernateUtil.getSessionFactoryInstatce().openSession();
-		
-	
-		List<Assets> assetRecord = session.createQuery("from Assets", Assets.class).getResultList();
-		
-		for (int i =0; i< assetRecord.size(); i++) {
+		try {
 			
-			Assets assets = assetRecord.get(i);
-			System.out.println("\tAsset ID: "+ assets.getAssetId()+ " \tAsset Name: "+assets.getAssetName()+ " \tAsset Type: "+assets.getAssetType()+ " \tSerial Number: "+assets.getSerialNumber()+ " \tPurchase Date: "+assets.getPurchaseDate());
+				Session session = HibernateUtil.getSessionFactoryInstatce().openSession();
 			
+			
+				String hql = "FROM Assets a JOIN FETCH a.componentDetails";
+			 
+				List<Assets> assets = session.createQuery(hql, Assets.class).getResultList();
+			
+				try {
+					
+					if (assets.isEmpty()) {
+						
+						System.out.println("Assets and Component Details is Not Available");
+						return;
+					}
+					
+					for (Assets asset : assets) {
+						System.out.println(asset.toString());
+						System.out.println(asset.getComponentDetails().toString());
+						System.out.println("-----------------------------------------------");
+					}
+				
+				} catch (Exception e) {
+					
+					System.out.println("Assets and Component Details is Not View"+ e.getMessage());
+					
+				}
+			 
+				 Transaction transaction = session.beginTransaction();
+				
+					 
+				 	try {
+						 
+						 transaction.commit();
+						 System.out.println("View All Assets & Component Details Succesfully");
+						 
+					} catch (Exception e) {
+						
+						transaction.rollback();
+						
+						System.out.println("Error While View All Assets & Component Details: "+e.getMessage());
+						System.out.println("Record is not View!!!");
+					
+					
+					}  finally {
+						
+						 session.close(); 
+					} 
+		
+		
+		} catch (HibernateException hibernateException) {
+			
+			System.out.println("Hibernate Exception: "+hibernateException.getMessage());
 		}
-		Transaction transaction = session.beginTransaction();
-		
-		transaction.commit();
-		session.close();
-		System.out.println("View All Asset Details Succesfully");
-		
+		catch (Exception e) {
+			
+			System.out.println("Asset Details And Component Details is not View "+e.getMessage());
+		}
 	}
-
 }

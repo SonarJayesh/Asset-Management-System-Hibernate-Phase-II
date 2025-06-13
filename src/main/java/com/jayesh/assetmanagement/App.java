@@ -2,7 +2,6 @@ package com.jayesh.assetmanagement;
 
 import com.jayesh.assetmanagement.util.HibernateUtil;
 
-
 public class App {
 	
 	public App() {
@@ -56,6 +55,5 @@ public class App {
         new App();
         
     }
-	
 	
 }
